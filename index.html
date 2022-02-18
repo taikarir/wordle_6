@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <link rel="stylesheet" src="style.css">
+    <style>
+      body {
+        display: flex;
+        justify-content: center;;
+      }
+      #valid_words {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="valid_words"></div>
+    <script src="p5.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!--<script>
+      jQuery.get("./6_letter_words.txt", function(data) {
+        const VALID_WORDS = data;
+        console.log(VALID_WORDS);
+      });
+    </script>-->
+    <script src="setup.js"></script>
+    <div id="game">
+      <script src="sketch.js"></script>
+    </div>
+  </body>
+</html>
