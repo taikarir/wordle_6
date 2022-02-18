@@ -66,7 +66,7 @@ function setup() {
 function draw() {
     background(70,70,80);
     for (var i=0; i<NUM_LETTERS; i++) {
-        if (won === false && current_row>0 && colors[current_row-1][i]==="g") {
+        if (won === 0 && current_row>0 && colors[current_row-1][i]==="g") {
             if (i<NUM_LETTERS-1) {
                 continue;
             }
