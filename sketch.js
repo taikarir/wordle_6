@@ -1,4 +1,6 @@
-const NUM_TRIES = 6;
+console.log("Welcome to Wordle.6!\nTo choose a new secret word, type 'SECRET_WORD = randomizeWord();'\nTo select a secret word, type 'SECRET_WORD = selectWord('YourWordHere');'");
+
+const NUM_TRIES = 5;
 const NUM_LETTERS = 6;
 const CANVAS_WIDTH = 500;
 const TILE_SIZE = 60;
@@ -11,11 +13,28 @@ const TOP_BOUND = 20;
 
 // get list of valid words
 readTextFile("./6_letter_words.txt");
-const VALID_WORDS = document.getElementById("valid_words").innerHTML.split(" ");
-const SECRET_WORD = "cursed";
+const VALID_WORDS_ = document.getElementById("valid_words").innerHTML.split(" ");
+// get list of valid secret words
+readTextFile("./6_letter_secret_words.txt");
+const VALID_SECRET_WORDS = document.getElementById("valid_words").innerHTML.split("\n    ");
+const VALID_WORDS = VALID_WORDS_.concat(VALID_SECRET_WORDS);
+
+var SECRET_WORD;
+SECRET_WORD = randomizeWord();
+
+var SECRET_LETTERS = {};
+// get letter count of secret word
+for (var l of SECRET_WORD) {
+    if (SECRET_LETTERS[l]) {
+        SECRET_LETTERS[l]+=1;
+    } else {
+        SECRET_LETTERS[l]=1;
+    }
+}
 
 const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 
+var won = 0;
 var current_row = 0;
 var current_pos = 0;
 var current_guess = "";
@@ -45,7 +64,18 @@ function setup() {
 }
 
 function draw() {
-    background(200,100,50);
+    background(70,70,80);
+    for (var i=0; i<NUM_LETTERS; i++) {
+        if (won === false && current_row>0 && colors[current_row-1][i]==="g") {
+            if (i<NUM_LETTERS-1) {
+                continue;
+            }
+        } else {
+            break;
+        }
+        console.log("You won");
+        won = 1;
+    }
     for (var i=0; i<NUM_TRIES; i++) {
         for (var j=0; j<NUM_LETTERS; j++) {
             strokeWeight(2);
@@ -60,27 +90,39 @@ function draw() {
                 fill(120,124,126);
                 stroke(120,124,126);
             } else {
-                fill(240,240,240);
+                noFill();
                 if (grid[i][j]!==" ") {
-                    stroke(50,50,50);
+                    stroke(10,10,10);
                 } else {
                     stroke(200,200,200);
                 }
             }
             rect(H_SPACING*j+LEFT_BOUND+j*TILE_SIZE, V_SPACING*i+TOP_BOUND+i*TILE_SIZE, TILE_SIZE, TILE_SIZE);
             if (colors[i][j]!==" ") {
-                fill(230,230,230);
+                fill(240,240,240);
             } else {
                 fill(0,0,0);
             }
             noStroke();
             textSize(45);
             text(grid[i][j], H_SPACING*j+LEFT_BOUND+j*TILE_SIZE+TILE_SIZE/2, V_SPACING*i+TOP_BOUND+i*TILE_SIZE+TILE_SIZE/2);
+            if (won === 1) {
+                textSize(20);
+                fill(240,240,240);
+                text("You won! Click to play again", CANVAS_WIDTH/2,600);
+            } else if (won === 2) {
+                textSize(20);
+                fill(240,240,240);
+                text("You lost. The word was "+SECRET_WORD.toUpperCase()+"\nClick to play again", CANVAS_WIDTH/2,600);
+            }
         }
     }
 }
 
 function keyPressed() {
+    if (won) {
+        return false;
+    }
     var nkey = key;
     // delete key
     if (key === "Backspace" && current_pos>0) {
@@ -92,9 +134,20 @@ function keyPressed() {
     if (key === "Enter" && current_pos === NUM_LETTERS && current_row<NUM_TRIES) {
         // only valid words are allowed
         if (VALID_WORDS.includes(current_guess)) {
+            var letter_count = {};
+            for (var l of current_guess) {
+                if (letter_count[l]) {
+                    letter_count[l]+=1;
+                } else{
+                    letter_count[l]=1;
+                }
+            }
+            // coloring letters
             for (var i=0; i<NUM_LETTERS; i++) {
-                if (SECRET_WORD.includes(grid[current_row][i])) {
-                    if (SECRET_WORD.indexOf(grid[current_row][i]) === i) {
+                var letter = grid[current_row][i]
+                if (SECRET_WORD.includes(letter)) {
+                    var ind = SECRET_WORD.indexOf(letter);
+                    if (ind === i || SECRET_WORD.indexOf(letter,ind+1) === i || SECRET_WORD.lastIndexOf(letter) === i) {
                         colors[current_row][i] = "g";
                     } else {
                         colors[current_row][i] = "y";
@@ -103,13 +156,16 @@ function keyPressed() {
                     colors[current_row][i] = "b";
                 }
             }
-            console.log(current_guess);
+            console.log("You guessed: "+current_guess);
 
             current_row += 1;
             current_pos = 0;
             current_guess = "";
+            if (current_row === NUM_TRIES) {
+                won = 2;
+            }
         } else {
-            console.log("not a word");
+            console.log("Error: not a word");
         }
     }
     // only letters are allowed
@@ -117,6 +173,30 @@ function keyPressed() {
         grid[current_row][current_pos] = nkey;
         current_guess += nkey;
         current_pos += 1;
+    }
+    return false;
+}
+
+function mouseClicked() {
+    // resets game state
+    if (won !== 0) {
+        won = 0;
+        SECRET_WORD = randomizeWord();
+        current_row = 0;
+        current_pos = 0;
+        current_guess = "";
+        grid = [];
+        colors = [];
+        for (var i=0; i<NUM_TRIES; i++) {
+            var one_row = [];
+            var one_row2 = [];
+            for (var j=0; j<NUM_LETTERS; j++) {
+               one_row.push(" ");
+               one_row2.push(" ");
+            }
+        grid.push(one_row);
+        colors.push(one_row2);
+        }
     }
     return false;
 }
