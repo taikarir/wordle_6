@@ -1,14 +1,17 @@
 const NUM_TRIES = 6;
 const NUM_LETTERS = 6;
 const CANVAS_WIDTH = 500;
-const TILE_SIZE = 70;
+const TILE_SIZE = 60;
 
-const LEFT_BOUND = CANVAS_WIDTH/2-NUM_LETTERS/2*TILE_SIZE;
+const H_SPACING = 10;
+const V_SPACING = 10;
+const LEFT_BOUND = CANVAS_WIDTH/2-NUM_LETTERS/2*TILE_SIZE-H_SPACING*(NUM_LETTERS-1)/2;
 const TOP_BOUND = 20;
 
+
+// get list of valid words
 readTextFile("./6_letter_words.txt");
 const VALID_WORDS = document.getElementById("valid_words").innerHTML.split(" ");
-console.log(VALID_WORDS.length);
 const SECRET_WORD = "cursed";
 
 const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
@@ -42,10 +45,11 @@ function setup() {
 }
 
 function draw() {
-    background(0,0,0);
+    background(200,100,50);
     for (var i=0; i<NUM_TRIES; i++) {
         for (var j=0; j<NUM_LETTERS; j++) {
             strokeWeight(2);
+            // colors tiles
             if (colors[i][j]==="y") {
                 fill(201,180,88);
                 stroke(201,180,88);
@@ -57,25 +61,36 @@ function draw() {
                 stroke(120,124,126);
             } else {
                 fill(240,240,240);
-                stroke(200,200,200);
+                if (grid[i][j]!==" ") {
+                    stroke(50,50,50);
+                } else {
+                    stroke(200,200,200);
+                }
             }
-            rect(LEFT_BOUND+j*TILE_SIZE, TOP_BOUND+i*TILE_SIZE, TILE_SIZE, TILE_SIZE);
-            fill(0,0,0);
+            rect(H_SPACING*j+LEFT_BOUND+j*TILE_SIZE, V_SPACING*i+TOP_BOUND+i*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            if (colors[i][j]!==" ") {
+                fill(230,230,230);
+            } else {
+                fill(0,0,0);
+            }
             noStroke();
             textSize(45);
-            text(grid[i][j], LEFT_BOUND+j*TILE_SIZE+TILE_SIZE/2, TOP_BOUND+i*TILE_SIZE+TILE_SIZE/2);
+            text(grid[i][j], H_SPACING*j+LEFT_BOUND+j*TILE_SIZE+TILE_SIZE/2, V_SPACING*i+TOP_BOUND+i*TILE_SIZE+TILE_SIZE/2);
         }
     }
 }
 
 function keyPressed() {
     var nkey = key;
+    // delete key
     if (key === "Backspace" && current_pos>0) {
         grid[current_row][current_pos-1] = " ";
         current_guess = current_guess.slice(0,-1);
         current_pos -= 1;
     }
+    // enter guess
     if (key === "Enter" && current_pos === NUM_LETTERS && current_row<NUM_TRIES) {
+        // only valid words are allowed
         if (VALID_WORDS.includes(current_guess)) {
             for (var i=0; i<NUM_LETTERS; i++) {
                 if (SECRET_WORD.includes(grid[current_row][i])) {
@@ -97,11 +112,11 @@ function keyPressed() {
             console.log("not a word");
         }
     }
+    // only letters are allowed
     if (ALPHABET.includes(nkey) && current_pos<NUM_LETTERS && current_row<NUM_TRIES) {
         grid[current_row][current_pos] = nkey;
         current_guess += nkey;
         current_pos += 1;
     }
-    console.log(current_guess);
     return false;
 }
