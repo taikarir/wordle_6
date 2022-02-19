@@ -188,6 +188,7 @@ function mouseClicked() {
     if (won !== 0) {
         won = 0;
         SECRET_WORD = randomizeWord();
+        known_letters = {};
         current_row = 0;
         current_pos = 0;
         current_guess = "";
