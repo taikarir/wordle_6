@@ -35,6 +35,7 @@ for (var l of SECRET_WORD) {
 const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 
 var won = 0;
+var known_letters = {};
 var current_row = 0;
 var current_pos = 0;
 var current_guess = "";
@@ -110,16 +111,17 @@ function draw() {
             noStroke();
             textSize(45);
             text(grid[i][j], H_SPACING*j+LEFT_BOUND+j*TILE_SIZE+TILE_SIZE/2, V_SPACING*i+TOP_BOUND+i*TILE_SIZE+TILE_SIZE/2);
-            if (won === 1) {
-                textSize(20);
-                fill(240,240,240);
-                text("You won! Click to play again", CANVAS_WIDTH/2,600);
-            } else if (won === 2) {
-                textSize(20);
-                fill(240,240,240);
-                text("You lost. The word was "+SECRET_WORD.toUpperCase()+"\nClick to play again", CANVAS_WIDTH/2,600);
-            }
         }
+    }
+    showKeyboard();
+    if (won === 1) {
+        textSize(20);
+        fill(240,240,240);
+        text("You won! Click to play again", CANVAS_WIDTH/2,TOP_BOUND+TILE_SIZE*(NUM_TRIES+2));
+    } else if (won === 2) {
+        textSize(20);
+        fill(240,240,240);
+        text("You lost. The word was "+SECRET_WORD.toUpperCase()+"\nClick to play again", CANVAS_WIDTH/2,TOP_BOUND+TILE_SIZE*(NUM_TRIES+2));
     }
 }
 
@@ -153,11 +155,14 @@ function keyPressed() {
                     var ind = SECRET_WORD.indexOf(letter);
                     if (ind === i || SECRET_WORD.indexOf(letter,ind+1) === i || SECRET_WORD.lastIndexOf(letter) === i) {
                         colors[current_row][i] = "g";
+                        known_letters[letter] = 2;
                     } else {
                         colors[current_row][i] = "y";
+                        known_letters[letter] = 1;
                     }
                 } else {
                     colors[current_row][i] = "b";
+                    known_letters[letter] = 0;
                 }
             }
             console.log("You guessed: "+current_guess);
