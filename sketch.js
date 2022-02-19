@@ -76,6 +76,10 @@ function draw() {
         console.log("You won");
         won = 1;
     }
+    if (won === 0 && current_row === NUM_TRIES) {
+        won = 2;
+        console.log("You lost. The word was "+SECRET_WORD);
+    }
     for (var i=0; i<NUM_TRIES; i++) {
         for (var j=0; j<NUM_LETTERS; j++) {
             strokeWeight(2);
@@ -161,9 +165,6 @@ function keyPressed() {
             current_row += 1;
             current_pos = 0;
             current_guess = "";
-            if (current_row === NUM_TRIES) {
-                won = 2;
-            }
         } else {
             console.log("Error: not a word");
         }
