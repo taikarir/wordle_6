@@ -158,7 +158,9 @@ function keyPressed() {
                         known_letters[letter] = 2;
                     } else {
                         colors[current_row][i] = "y";
-                        known_letters[letter] = 1;
+                        if (known_letters[letter] !== 2) {
+                            known_letters[letter] = 1;
+                        }
                     }
                 } else {
                     colors[current_row][i] = "b";
