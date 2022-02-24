@@ -1,6 +1,6 @@
 console.log("Welcome to Wordle.6!\nTo choose a new secret word, type 'SECRET_WORD = randomizeWord();'\nTo select a secret word, type 'SECRET_WORD = selectWord('YourWordHere');'");
 
-const NUM_TRIES = 7;
+const NUM_TRIES = 5;
 const NUM_LETTERS = 6;
 const CANVAS_WIDTH = 500;
 const TILE_SIZE = 60;
@@ -18,7 +18,6 @@ const TOP_BOUND = 20;
 //readTextFile("./6_letter_secret_words.txt");
 //const VALID_SECRET_WORDS = document.getElementById("valid_words").innerHTML.split("\n    ");
 const VALID_WORDS = VALID_WORDS_.concat(VALID_SECRET_WORDS);
-console.log(VALID_WORDS);
 
 var SECRET_WORD;
 SECRET_WORD = randomizeWord();
